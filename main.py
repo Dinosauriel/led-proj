@@ -4,6 +4,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--pattern", help="name of the pattern to be displayed")
     parser.add_argument("-c", "--calibrate", choices=["server", "client"], help="mode to use for calibration. e.g. 'server' for raspberry pi, 'client' for laptop taking photos")
+    parser.add_argument("-g", "--gencoords", help="generate the coords.csv file from image folder")
     return parser.parse_args()
 
 
