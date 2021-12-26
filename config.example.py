@@ -1,0 +1,3 @@
+
+NUM_LEDS = 500
+SERVER_SSH_HOSTNAME = "hostname"
