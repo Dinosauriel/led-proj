@@ -1,4 +1,11 @@
 import argparse
+import time
+import patterns.gold as gold
+import config
+import neopixel
+import board
+import util
+import importlib
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -25,6 +32,23 @@ def main():
 
     if args.pattern != None:
         print(f"running pattern {args.pattern}")
+        pixels = neopixel.NeoPixel(board.D18, config.NUM_LEDS, auto_write=False)
+
+        try:
+            mod = importlib.import_module("patterns." + args.pattern)
+        except:
+            print(f"couln't find pattern \"{args.pattern}\". make sure \"patterns/{args.pattern}.py\" exists")
+            return
+
+        pattern = mod.Pattern(config.NUM_LEDS)
+
+        while not pattern.should_finish:
+            t = int(time.time() * 1000)
+            colors = pattern.draw(t)
+            pixels[:] = [util.grb_to_rgb(c) for c in colors]
+            pixels.show()
+            time.sleep(0.05)
+
         return
 
     print("no command issued. exiting")
