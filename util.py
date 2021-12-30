@@ -7,8 +7,3 @@ blue = (0, 0, 255)
 def multiply_color(color, factor):
     r, g, b = color
     return int(r * factor), int(g * factor), int(b * factor)
-
-
-def grb_to_rgb(color):
-    g, r, b = color
-    return r, g, b

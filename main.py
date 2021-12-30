@@ -31,7 +31,7 @@ def main():
 
     if args.pattern != None:
         print(f"running pattern {args.pattern}")
-        pixels = neopixel.NeoPixel(board.D18, config.NUM_LEDS, auto_write=False)
+        pixels = neopixel.NeoPixel(board.D18, config.NUM_LEDS, auto_write=False, pixel_order=neopixel.RGB, brightness=1.0)
 
         try:
             mod = importlib.import_module("patterns." + args.pattern)
@@ -45,9 +45,7 @@ def main():
             t = int(time.time() * 1000)
             if t - last_frame >= pattern.interval:
                 last_frame = t
-                colors = pattern.draw(t)
-                colors[:, [1, 0]] = colors[:, [0, 1]]
-                pixels[:] = colors
+                pixels[:] = pattern.draw(t)
                 pixels.show()
             time.sleep(0.0005)
 
