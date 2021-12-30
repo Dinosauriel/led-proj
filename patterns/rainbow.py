@@ -6,7 +6,7 @@ class Pattern(Pattern1D):
     def __init__(self, n):
         super().__init__(n)
         self.colors = np.zeros((n, 3))
-        self.color = np.zeros((3, 3))
+        self.color = np.zeros(3)
         self.color[0] = 255
         self.head = 0
         self.interval = 10
