@@ -13,10 +13,10 @@ class Pattern(Pattern1D):
         self.state = 0
 
     def draw(self, t):
-        if state == 0:
+        if self.state == 0:
           self.color[0] -= 1
           self.color[1] += 1
-        elif state == 1:
+        elif self.state == 1:
           self.color[1] -= 1
           self.color[2] += 1
         else:
