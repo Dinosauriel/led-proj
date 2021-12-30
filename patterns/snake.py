@@ -1,5 +1,4 @@
 from pattern import Pattern1D
-import util
 import numpy as np
 
 class Pattern(Pattern1D):
