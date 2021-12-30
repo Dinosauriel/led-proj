@@ -1,6 +1,5 @@
 import argparse
 import time
-import patterns.gold as gold
 import config
 import neopixel
 import board
@@ -41,13 +40,16 @@ def main():
             return
 
         pattern = mod.Pattern(config.NUM_LEDS)
-
+        last_frame = 0
         while not pattern.should_finish:
             t = int(time.time() * 1000)
-            colors = pattern.draw(t)
-            pixels[:] = [util.grb_to_rgb(c) for c in colors]
-            pixels.show()
-            time.sleep(0.05)
+            if t - last_frame >= pattern.interval:
+                last_frame = t
+                colors = pattern.draw(t)
+                colors[:, [1, 0]] = colors[:, [0, 1]]
+                pixels[:] = colors
+                pixels.show()
+            time.sleep(0.0005)
 
         return
 
