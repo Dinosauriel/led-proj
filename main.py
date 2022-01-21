@@ -3,8 +3,8 @@ import time
 import config
 import neopixel
 import board
-import util
 import importlib
+from controls.controls import XboxController
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -17,6 +17,7 @@ def get_args():
 
 def main():
     args = get_args()
+    controller = XboxController()
 
     if args.calibrate == "server":
         import calibrate_server
@@ -41,15 +42,21 @@ def main():
 
         pattern = mod.Pattern(config.NUM_LEDS)
         last_frame = 0
-        while not pattern.should_finish:
+        while True:
+
+            buttons = controller.poll_buttons()
+
+            if buttons[controller.XBOX_A]:
+                print("switching patterns")
+            if buttons[controller.XBOX_HOME]:
+                print("turning off")
+
             t = int(time.time() * 1000)
             if t - last_frame >= pattern.interval:
                 last_frame = t
                 pixels[:] = pattern.draw(t)
                 pixels.show()
             time.sleep(0.0005)
-
-        return
 
     print("no command issued. exiting")
     return
