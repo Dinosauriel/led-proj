@@ -2,7 +2,7 @@ from pattern import Pattern1D
 import numpy as np
 import util
 
-class Pattern(Pattern1D):
+class PatternUniform(Pattern1D):
 
     def __init__(self, n):
         super().__init__(n)

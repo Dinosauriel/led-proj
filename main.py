@@ -5,6 +5,12 @@ import neopixel
 import board
 import importlib
 from controls.controls import XboxController
+from pattern_lib.clear import *
+from pattern_lib.color_palette import *
+from pattern_lib.glitter import *
+from pattern_lib.rainbow import *
+from pattern_lib.snake import *
+from pattern_lib.uniform import *
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -31,25 +37,41 @@ def main():
         return
 
     if args.pattern != None:
-        print(f"running pattern {args.pattern}")
+        patterns = [
+            PatternClear,
+            PatternColorPalette,
+            PatternGlitter,
+            PatternRainbow,
+            PatternSnake,
+            PatternUniform
+        ]
+        pattern_i = 0
+
+        # print(f"running pattern {args.pattern}")
         pixels = neopixel.NeoPixel(board.D18, config.NUM_LEDS, auto_write=False, pixel_order=neopixel.RGB, brightness=1.0)
 
-        try:
-            mod = importlib.import_module("patterns." + args.pattern)
-        except:
-            print(f"couln't find pattern \"{args.pattern}\". make sure \"patterns/{args.pattern}.py\" exists")
-            return
+        # try:
+        #     mod = importlib.import_module("patterns." + args.pattern)
+        # except:
+        #     print(f"couln't find pattern \"{args.pattern}\". make sure \"patterns/{args.pattern}.py\" exists")
+        #     return
 
-        pattern = mod.Pattern(config.NUM_LEDS)
+        pattern = patterns[pattern_i](config.NUM_LEDS)
         last_frame = 0
         while True:
 
             buttons = controller.poll_buttons()
 
             if buttons[controller.XBOX_A]:
-                print("switching patterns")
+                pattern_i = (pattern_i + 1) % len(patterns)
+                pattern = patterns[pattern_i](config.NUM_LEDS)
+                last_frame = 0
+                print("pattern: ", pattern.__class__.__name__)
             if buttons[controller.XBOX_HOME]:
                 print("turning off")
+                pixels.fill((0, 0, 0))
+                pixels.show()
+                exit()
 
             t = int(time.time() * 1000)
             if t - last_frame >= pattern.interval:

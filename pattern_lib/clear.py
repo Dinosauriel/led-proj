@@ -1,8 +1,7 @@
 from pattern import Pattern1D
-import util
 import numpy as np
 
-class Pattern(Pattern1D):
+class PatternClear(Pattern1D):
 
     def __init__(self, n):
         super().__init__(n)

@@ -1,7 +1,7 @@
 from pattern import Pattern1D
 import numpy as np
 
-class Pattern(Pattern1D):
+class PatternRainbow(Pattern1D):
 
     def __init__(self, n):
         super().__init__(n)
@@ -9,19 +9,19 @@ class Pattern(Pattern1D):
         self.color = np.zeros(3)
         self.color[0] = 255
         self.head = 0
-        self.interval = 10
+        self.interval = 15
         self.state = 0
 
     def draw(self, t):
         if self.state == 0:
-          self.color[0] -= 1
-          self.color[1] += 1
+          self.color[0] -= 5
+          self.color[1] += 5
         elif self.state == 1:
-          self.color[1] -= 1
-          self.color[2] += 1
+          self.color[1] -= 5
+          self.color[2] += 5
         else:
-          self.color[2] -= 1
-          self.color[0] += 1
+          self.color[2] -= 5
+          self.color[0] += 5
         
         if self.color[self.state] == 0:
           self.state = (self.state + 1) % 3
