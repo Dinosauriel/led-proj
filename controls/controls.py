@@ -23,7 +23,17 @@ class XboxController():
 
     def __init__(self) -> None:
         self.path = "/dev/input/event0"
-        self.fd = os.open(self.path, os.O_RDONLY | os.O_NONBLOCK)
+        self.is_connected = False
+        self.reconnection_count = 0
+        self.open_controller()
+
+    def open_controller(self):
+        try:
+            self.fd = os.open(self.path, os.O_RDONLY | os.O_NONBLOCK)
+            self.is_connected = True
+        except FileNotFoundError as e:
+            print("didnt find controller file:", self.path)
+
 
     def poll_buttons(self):
         buttons = {
@@ -34,12 +44,24 @@ class XboxController():
 
             self.XBOX_HOME: False
         }
+        if not self.is_connected:
+            self.reconnection_count += 1
+            if self.reconnection_count > 100:
+                self.reconnection_count = 0
+                self.open_controller()
+            return buttons
 
         while True:
             ready, _, _ = select.select([self.fd], [], [], 0)
             if not ready:
                 break
-            buf = os.read(self.fd, 16)
+            try:
+                buf = os.read(self.fd, 16)
+            except OSError as e:
+                os.close(self.fd)
+                self.is_connected = False
+                print("controller not available")
+                break
 
             # sec = int.from_bytes(buf[:4], "little")
             e_type = int.from_bytes(buf[8:10], "little")
