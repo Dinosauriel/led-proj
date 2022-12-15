@@ -18,14 +18,13 @@ def rotate(color, speed):
     return color
 
 
-class PatternRotate(Pattern1D):
+class Pattern(Pattern1D):
 
     def __init__(self, n):
         super().__init__(n)
         self.colors = np.zeros((n, 3))
-        for i in range(n):
-            self.colors[i][0] = 196
-        self.interval = 40
+        self.colors[:][0] = 196
+        self.interval = 150
         self.speed = np.random.uniform(low=0.2, high=1., size=(self.n, 1))
 
     def draw(self, t):

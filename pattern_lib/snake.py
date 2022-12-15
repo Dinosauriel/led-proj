@@ -1,7 +1,7 @@
 from pattern import Pattern1D
 import numpy as np
 
-class PatternSnake(Pattern1D):
+class Pattern(Pattern1D):
 
     def __init__(self, n):
         super().__init__(n)

@@ -1,13 +1,13 @@
 from pattern import Pattern1D
 import numpy as np
 
-class PatternGlitter(Pattern1D):
+class Pattern(Pattern1D):
 
     def __init__(self, n):
         super().__init__(n)
         self.color = np.array([255,255,255]) * 0.7
         self.colors = np.zeros((n, 3))
-        self.interval = 10
+        self.interval = 70
         self.decay = np.random.uniform(low=0.95, high=0.9999, size=(self.n, 1))
 
     def draw(self, t):
