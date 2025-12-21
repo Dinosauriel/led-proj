@@ -1,6 +1,6 @@
-from pattern import Pattern1D
+from pi.pattern import Pattern1D
 import numpy as np
-import util
+import pi.util as util
 
 class Pattern(Pattern1D):
 

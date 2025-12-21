@@ -9,9 +9,7 @@ from controls.controls import XboxController
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--pattern", help="name of the pattern to be displayed")
-    parser.add_argument("-c", "--calibrate", choices=["server", "client"], help="mode to use for calibration. e.g. 'server' for raspberry pi, 'client' for laptop taking photos")
-    parser.add_argument("-g", "--gencoords", help="generate the coords.csv file from image folder")
+    parser.add_argument("-s", "--single", help="turn on a single light")
     return parser.parse_args()
 
 def get_pattern(name):
@@ -25,18 +23,11 @@ def get_pattern(name):
 
 def main():
     args = get_args()
-    controller = XboxController()
 
-    if args.calibrate == "server":
-        import calibrate_server
-        print(f"running calibration as {args.calibrate}")
-        calibrate_server.calibrate_server()
+    if args.single:
         return
-    elif args.calibrate == "client":
-        import calibrate_client
-        print(f"running calibration as {args.calibrate}")
-        calibrate_client.calibrate_client()
-        return
+
+    controller = XboxController()
 
     working_dir = os.path.dirname(os.path.realpath(__file__))
     pattern_files = [f[:-3] for f in os.listdir(working_dir + "/pattern_lib") if f[:2] != "__"] 

@@ -1,4 +1,4 @@
-from pattern import Pattern1D
+from pi.pattern import Pattern1D
 import numpy as np
 
 def rotate(color, speed):
