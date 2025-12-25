@@ -1,6 +1,8 @@
 import cv2
 import subprocess
 import config
+import sys
+import os
 
 def take_picture(camera, filename):
     ret, frame = camera.read()
@@ -10,10 +12,10 @@ def take_picture(camera, filename):
 
     # cv2.namedWindow("test")
     # cv2.imshow("test", frame)
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
     cv2.imwrite(filename, frame)
 
-def calibrate_client():
+def take_pictures():
     ssh_process = subprocess.Popen(["ssh", config.SERVER_SSH_HOSTNAME], stdin=subprocess.PIPE, stdout = subprocess.PIPE)
     ssh_process.stdin.write("cd " + config.SERVER_PROJECT_PATH + "\n")
     ssh_process.stdin.write("python3 main.py -c server")
@@ -45,3 +47,18 @@ def calibrate_client():
 
     ssh_process.stdin.write("exit\n")
     ssh_process.stdin.close()
+
+def main():
+    n = int(sys.argv[1])
+    print(f"number of leds: {n}")
+    try:
+        os.mkdir(os.path.dirname(os.path.realpath(__file__)) + "/out")
+    except Exception as e: 
+        print(f"Could not create directory: {e}")
+    camera = cv2.VideoCapture(0)
+    for i in range(n):
+        print(f"taking picture no {i}")
+        take_picture(camera, f"out/{i:04}.jpg")
+
+if __name__ == "__main__":
+    main()
