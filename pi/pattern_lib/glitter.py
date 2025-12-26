@@ -1,4 +1,4 @@
-from pi.pattern import Pattern1D
+from pattern import Pattern1D
 import numpy as np
 
 class Pattern(Pattern1D):
