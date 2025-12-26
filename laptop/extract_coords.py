@@ -13,13 +13,16 @@ def main():
     out_path = os.path.dirname(os.path.realpath(__file__)) + "/out"
     #files = glob.glob(out_path + "/**.jpg")
     #print(files)
+    try:
+        os.mkdir(out_path + "/marked")
+    except Exception as e: 
+        print(f"Could not create directory: {e}")
 
     n = int(sys.argv[1])
     coords = np.zeros((n, 3))
 
     for i in range(n):
         filename = out_path + f"/{i:04}.jpg"
-        print(filename)
         image = cv2.imread(filename)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         print(image.shape)
@@ -31,15 +34,22 @@ def main():
 
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
         cross(image, xb, yb)
-        cv2.imshow(filename, image)
-        cv2.waitKey(0)
+        cv2.imwrite(out_path + f"/marked/{i:04}.jpg", image)
 
+    # normalize the coordinates
     xmin = np.min(coords[:, 0])
-    # xmax = np.max(coords[:, 0])
+    xmax = np.max(coords[:, 0])
     ymin = np.min(coords[:, 1])
-    # ymax = np.max(coords[:, 1])
+    ymax = np.max(coords[:, 1])
+
+    scale = np.max((xmax - xmin, ymax - ymin))
+
+
     coords[:, 0] -= xmin
     coords[:, 1] -= ymin
+
+    coords[:, :] *= 1000
+    coords[:, :] /= scale
 
     np.savetxt(out_path + "/coords.csv", coords, fmt="%1i")
 

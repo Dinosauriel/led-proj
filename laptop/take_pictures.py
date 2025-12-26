@@ -1,8 +1,10 @@
+import time
 import cv2
 import subprocess
 import config
 import sys
 import os
+import shutil
 
 def take_picture(camera, filename):
     ret, frame = camera.read()
@@ -15,50 +17,38 @@ def take_picture(camera, filename):
     # cv2.waitKey(0)
     cv2.imwrite(filename, frame)
 
-def take_pictures():
-    ssh_process = subprocess.Popen(["ssh", config.SERVER_SSH_HOSTNAME], stdin=subprocess.PIPE, stdout = subprocess.PIPE)
-    ssh_process.stdin.write("cd " + config.SERVER_PROJECT_PATH + "\n")
-    ssh_process.stdin.write("python3 main.py -c server")
-
-    for line in ssh_process.stdout:
-        print(line)
-
-    camera = cv2.VideoCapture(0)
-
-    print("ready to start taking pictures")
-    print("make sure the object is in frame")
-    input("press enter to start...")
-
-    for i in range(config.NUM_LEDS):
-        print(f"led {i} of {config.NUM_LEDS}")
-        ssh_process.stdin.write("\n")
-        take_picture(camera, f"images/dim0/{i:05}.png")
-
-    print("first set of pictures done")
-    print("rotate object by 90 degrees without changing the frame")
-    input("press enter to continue...")
-
-    for i in range(config.NUM_LEDS):
-        print(f"led {i} of {config.NUM_LEDS}")
-        ssh_process.stdin.write("\n")
-        take_picture(camera, f"images/dim1/{i:05}.png")
-
-    camera.release()
-
-    ssh_process.stdin.write("exit\n")
-    ssh_process.stdin.close()
 
 def main():
     n = int(sys.argv[1])
     print(f"number of leds: {n}")
+
+    out_path = os.path.dirname(os.path.realpath(__file__)) + "/out"
+    if os.path.exists(out_path):
+        print(f"out_path already exists: {out_path}")
+        char = input("press y+[Enter] to delete existing out_path")
+        if char == 'y':
+            shutil.rmtree(out_path)
+        else:
+            print("aborting")
+            return
+
     try:
-        os.mkdir(os.path.dirname(os.path.realpath(__file__)) + "/out")
+        os.mkdir(out_path)
     except Exception as e: 
         print(f"Could not create directory: {e}")
+
     camera = cv2.VideoCapture(0)
+    print("waiting for camera to adjust")
+    time.sleep(0.5)
+    print("done wating")
+
     for i in range(n):
+        ssh_process = subprocess.Popen(["ssh", config.SERVER_SSH_HOSTNAME, f"sudo python3 {config.SERVER_PROJECT_PATH}/pi/single_light.py {i}\n".encode('utf-8')], stdin=subprocess.PIPE, stdout = subprocess.PIPE)
+        ssh_process.communicate()
         print(f"taking picture no {i}")
-        take_picture(camera, f"out/{i:04}.jpg")
+        take_picture(camera, f"{out_path}/{i:04}.jpg")
+
+    camera.release()
 
 if __name__ == "__main__":
     main()
